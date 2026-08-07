@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     depthWrite: false
   });
   const logoMesh = new THREE.Mesh(logoGeo, logoMat);
-  logoMesh.position.set(0, 3.2, -0.6);
+  logoMesh.position.set(0, 2.40, -0.6);
   logoMesh.renderOrder = -1;
   scene.add(logoMesh);
 
@@ -239,8 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         if (animationMode === 'spiral') {
-          // Slow, smooth incremental 3D drag physics
-          targetX += moveDeltaX * 0.0008;
+          // Dynamic 3-4x speed responsiveness relative to auto-rotation
+          targetX += moveDeltaX * 0.0035;
         } else {
           // Stream mode drag physics along X axis
           const physDeltaX = deltaX * 0.012;
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else {
       if (animationMode === 'spiral') {
-        targetX += delta * 0.0012;
+        targetX += delta * 0.003;
       } else {
         targetX += delta * 0.005;
       }
