@@ -1,0 +1,95 @@
+/* VibeCurb Showcase CSS System */
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #000000 !important;
+  color: var(--foreground);
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Mix Blend Exclusion for Floating Badges */
+.mix-blend-exclusion {
+  mix-blend-mode: exclusion;
+}
+
+/* Custom Cursor */
+#custom-cursor {
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+#custom-cursor.visible {
+  opacity: 1;
+}
+
+#webgl-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Admin Panel Styles */
+#loginModal.open,
+#adminModal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#adminList::-webkit-scrollbar {
+  width: 6px;
+}
+#adminList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+}
+#adminList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+#adminList::-webkit-scrollbar-thumb:hover {
+  background: #00f2fe;
+}
+
+.admin-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.85rem;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.admin-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(0, 242, 254, 0.3);
+}
+
+.admin-item.dragging {
+  opacity: 0.4;
+  border-color: #00f2fe;
+}
+
+.admin-item.drag-over {
+  border-color: #00f2fe;
+  background: rgba(0, 242, 254, 0.1);
+  transform: scale(1.01);
+}

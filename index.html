@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VibeCurb Showcase</title>
+  <meta name="description" content="VibeCurb forces AI agents to audit, extract, build, and verify against Awwwards-tier standards before writing a single line of code.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%23ffffff'/></svg>">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: '#0a0a0a',
+            foreground: '#ffffff',
+          },
+          fontFamily: {
+            sans: ['DM Sans', 'Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Three.js & GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="bg-black text-white overflow-hidden select-none min-h-screen m-0 p-0">
+
+  <!-- Header Navigation -->
+  <nav class="fixed top-0 left-0 w-full h-24 z-50 pointer-events-none flex items-center justify-between px-6 md:px-12">
+    
+    <!-- Left Navigation Links -->
+    <div class="hidden md:flex items-center gap-8 pointer-events-auto">
+      <a href="#" class="text-white/70 hover:text-white text-[15px] font-medium transition-colors no-underline">Home</a>
+      <a href="#" class="text-white/70 hover:text-white text-[15px] font-medium transition-colors no-underline">How it works</a>
+      <a href="#" class="text-white/70 hover:text-white text-[15px] font-medium transition-colors no-underline">Guide</a>
+      <a href="#" class="text-white text-[15px] font-medium transition-colors border-b-2 border-white pb-0.5 no-underline">Showcase</a>
+    </div>
+
+  </nav>
+
+  <!-- WebGL 3D Canvas Stage -->
+  <div id="webgl-container" class="h-screen w-full relative overflow-hidden"></div>
+
+  <!-- Bottom Active Index Indicator (01/09) -->
+  <div id="counter-badge" class="absolute px-4 left-1/2 -translate-x-1/2 bottom-12 mix-blend-exclusion text-white pointer-events-none z-40">
+    <p class="text-center text-base font-bold tracking-widest font-mono m-0">01/09</p>
+  </div>
+
+  <!-- Bottom Description Label -->
+  <div id="desc-badge" class="absolute px-4 left-1/2 -translate-x-1/2 bottom-6 mix-blend-exclusion text-white pointer-events-none z-40">
+    <p id="desc-text" class="text-center text-base font-semibold tracking-wide m-0">Axel Studio 01</p>
+  </div>
+
+  <!-- ADMIN LOGIN MODAL OVERLAY -->
+  <div id="loginModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-[#111116] border border-white/15 rounded-2xl w-full max-w-md p-6 md:p-8 shadow-2xl space-y-6">
+      
+      <!-- Login Header -->
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 rounded-xl bg-[#00f2fe]/20 border border-[#00f2fe]/40 flex items-center justify-center text-[#00f2fe] mx-auto mb-3 shadow-lg shadow-[#00f2fe]/10">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <h2 class="text-xl font-bold text-white tracking-tight">Acceso Privado // Admin</h2>
+        <p class="text-xs text-white/60">Introduce credenciales para gestionar el orden de la galería</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="adminLoginForm" class="space-y-4" onsubmit="return false;">
+        <div class="space-y-1">
+          <label class="text-[11px] font-semibold text-white/70 tracking-wider uppercase">Usuario</label>
+          <input type="text" id="loginUser" placeholder="Usuario admin" class="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#00f2fe] transition-colors" autocomplete="username">
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[11px] font-semibold text-white/70 tracking-wider uppercase">Contraseña</label>
+          <input type="password" id="loginPass" placeholder="••••••••" class="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#00f2fe] transition-colors" autocomplete="current-password">
+        </div>
+
+        <div id="loginErrorMsg" class="hidden text-xs text-red-400 font-medium text-center bg-red-500/10 border border-red-500/20 rounded-lg p-2">
+          Usuario o contraseña incorrectos
+        </div>
+
+        <div class="flex items-center gap-3 pt-2">
+          <button type="button" id="closeLoginBtn" class="w-1/2 py-2.5 rounded-xl text-xs font-semibold text-white/70 hover:text-white border border-white/10 hover:border-white/25 transition-all cursor-pointer">
+            Cancelar
+          </button>
+          <button type="submit" id="submitLoginBtn" class="w-1/2 py-2.5 rounded-xl text-xs font-bold text-black bg-[#00f2fe] hover:bg-[#33f5ff] transition-all shadow-lg shadow-[#00f2fe]/20 cursor-pointer">
+            Entrar al Panel
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL MODAL OVERLAY -->
+  <div id="adminModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 md:p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-[#111116] border border-white/15 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/5">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-[#00f2fe]/20 border border-[#00f2fe]/40 flex items-center justify-center text-[#00f2fe]">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-white tracking-tight">Panel de Administración</h2>
+            <p class="text-xs text-white/60">Arrastra las miniaturas para cambiar su orden en el carrusel 3D</p>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <button id="logoutAdminBtn" class="text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-lg transition-colors cursor-pointer">
+            Cerrar Sesión
+          </button>
+          <button id="closeAdminBtn" class="text-white/60 hover:text-white text-2xl font-light leading-none p-1 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">&times;</button>
+        </div>
+      </div>
+
+      <!-- Animation Mode Selector -->
+      <div class="px-6 pt-4 pb-1 border-b border-white/10 flex items-center justify-between gap-4 bg-white/[0.02]">
+        <div>
+          <label class="text-xs font-bold text-white tracking-wide block">Modo de Animación 3D</label>
+          <span class="text-[11px] text-white/50 block">Selecciona el estilo visual que verán los usuarios</span>
+        </div>
+        <select id="animationModeSelect" class="bg-[#181820] border border-white/20 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-[#00f2fe] cursor-pointer hover:border-white/40 transition-colors">
+          <option value="horizontal">Carrusel Horizontal 3D (Actual)</option>
+          <option value="cascade">Cascada Perspectiva 3D (Home VibeCurb)</option>
+        </select>
+      </div>
+
+      <!-- Upload Dropzone Area -->
+      <div class="px-6 pt-4">
+        <input type="file" id="fileUploadInput" multiple accept="image/*" class="hidden">
+        <div id="uploadDropzone" class="border-2 border-dashed border-white/20 hover:border-[#00f2fe]/60 bg-white/5 hover:bg-[#00f2fe]/5 rounded-xl p-4 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-1.5 group">
+          <div class="w-8 h-8 rounded-full bg-white/10 group-hover:bg-[#00f2fe]/20 text-white/70 group-hover:text-[#00f2fe] flex items-center justify-center transition-colors">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <p class="text-xs font-semibold text-white/90 group-hover:text-white">Arrastra imágenes desde tu ordenador o haz clic para subir</p>
+          <p class="text-[10px] text-white/50">Archivos soportados: JPG, PNG, WEBP</p>
+        </div>
+      </div>
+
+      <!-- Reorderable List Container -->
+      <div class="flex-1 overflow-y-auto p-6 pt-3 space-y-3" id="adminList">
+        <!-- Reorderable items rendered by JS -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between px-6 py-4 border-t border-white/10 bg-white/5">
+        <button id="resetOrderBtn" class="px-4 py-2 rounded-xl text-xs font-semibold text-white/70 hover:text-white border border-white/10 hover:border-white/30 bg-white/5 hover:bg-white/10 transition-all cursor-pointer">
+          Restablecer por Defecto
+        </button>
+
+        <div class="flex items-center gap-3">
+          <button id="cancelAdminBtn" class="px-4 py-2 rounded-xl text-xs font-semibold text-white/70 hover:text-white transition-colors cursor-pointer">
+            Cancelar
+          </button>
+          <button id="saveAdminBtn" class="px-5 py-2.5 rounded-xl text-xs font-bold text-black bg-[#00f2fe] hover:bg-[#33f5ff] transition-all shadow-lg shadow-[#00f2fe]/20 cursor-pointer">
+            Guardar y Aplicar 3D
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
