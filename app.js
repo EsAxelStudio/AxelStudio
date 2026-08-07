@@ -399,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
       gsap.to(mesh.position, {
         x: 0,
         y: 0,
-        z: 3.2,
+        z: 0,
         duration: 1.1,
         ease: 'power3.out'
       });
@@ -491,9 +491,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (animationMode === 'spiral') {
       if (!isFocused) {
-        // Continuous smooth auto-rotation moving UPWARDS and RIGHTWARDS
+        // Continuous smooth auto-rotation moving UPWARDS across FRONT towards right
         if (!isDragging) {
-          targetX -= 0.012;
+          targetX += 0.012;
         }
 
         currentX += (targetX - currentX) * 0.08;
@@ -501,8 +501,8 @@ document.addEventListener('DOMContentLoaded', () => {
         streamGroup.rotation.x = mouse.y * 0.04;
         streamGroup.rotation.y = mouse.x * 0.04;
 
-        const scrollAngle = -currentX * 0.12;
-        const scrollY = -currentX * 0.28;
+        const scrollAngle = currentX * 0.12;
+        const scrollY = currentX * 0.28;
         const loopRange = totalItems * 1.7;
 
         panels.forEach((panel) => {
