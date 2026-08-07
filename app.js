@@ -105,8 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const textureLoader = new THREE.TextureLoader();
   let panels = [];
 
-  // Large AXEL STUDIO 3D Logo in Background (16:9 Aspect Ratio 6.0 x 3.375)
-  const logoTexture = textureLoader.load('/assets/axel_studio_logo.png');
+  // Large AXEL STUDIO 3D Logo in Background (16:9 Aspect Ratio 5.8 x 3.26)
+  const logoTexture = textureLoader.load('/assets/axel_studio_logo.png?v=2');
   logoTexture.minFilter = THREE.LinearFilter;
   logoTexture.magFilter = THREE.LinearFilter;
 
