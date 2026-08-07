@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     depthWrite: false
   });
   const logoMesh = new THREE.Mesh(logoGeo, logoMat);
-  logoMesh.position.set(0, 2.40, -0.6);
+  logoMesh.position.set(0, 3.2, -0.6);
   logoMesh.renderOrder = -1;
   scene.add(logoMesh);
 
@@ -167,12 +167,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mode B: VibeCurb Home 3D Perspective Cascade Grid
         const col = (index % 3) - 1; // -1, 0, 1
         const row = Math.floor(index / 3);
-        mesh.position.x = col * 4.4;
-        mesh.position.y = -row * 2.7 + (col === 0 ? 0.3 : 0);
+        mesh.position.x = col * 4.6;
+        mesh.position.y = -row * 3.1 - 0.2 + (col === 0 ? 0.35 : 0);
         mesh.position.z = -row * 0.5 - Math.abs(col) * 0.3;
-        mesh.rotation.x = 0.12;
-        mesh.rotation.y = -col * 0.1;
-        mesh.userData = { index, item, initX: mesh.position.x, initY: mesh.position.y, initZ: mesh.position.z, initRotX: 0.12, initRotY: -col * 0.1 };
+        mesh.rotation.x = 0.05;
+        mesh.rotation.y = -col * 0.08;
+        mesh.userData = { index, item, initX: mesh.position.x, initY: mesh.position.y, initZ: mesh.position.z, initRotX: 0.05, initRotY: -col * 0.08 };
       } else {
         // Mode A: Horizontal 3D Stream (Default untouched)
         mesh.position.x = index * SPACING;
@@ -187,8 +187,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     targetX = 0;
     currentX = 0;
-    targetY = 0;
-    currentY = 0;
+    targetY = animationMode === 'cascade' ? 0.6 : 0;
+    currentY = animationMode === 'cascade' ? 0.6 : 0;
     activeIndex = 0;
     isFocused = false;
     focusedMesh = null;
