@@ -357,15 +357,6 @@ document.addEventListener('DOMContentLoaded', () => {
     counterBadge.querySelector('p').textContent = `${formattedIndex}/${String(totalItems).padStart(2, '0')}`;
     descText.textContent = showcaseItems[activeIndex] ? showcaseItems[activeIndex].desc : '';
 
-    if (animationMode === 'spiral') {
-      targetX = -mesh.userData.baseAngle / 0.12;
-      currentX = targetX;
-    } else {
-      targetX = mesh.position.x;
-      currentX = mesh.position.x;
-    }
-
-    // Reset previous focused mesh scale
     if (prevMesh && prevMesh !== mesh) {
       gsap.to(prevMesh.scale, {
         x: 1.0,
@@ -374,18 +365,28 @@ document.addEventListener('DOMContentLoaded', () => {
         duration: 0.8,
         ease: 'power2.out'
       });
-      if (animationMode === 'spiral') {
-        gsap.to(prevMesh.rotation, {
-          x: 0.08,
-          y: prevMesh.userData.baseAngle,
-          z: 0,
-          duration: 0.8,
-          ease: 'power2.out'
-        });
-      }
     }
 
-    if (animationMode !== 'spiral') {
+    if (animationMode === 'spiral') {
+      // Calculate angle offset to bring clicked panel directly to front center
+      const currentScrollAngle = currentX * 0.12;
+      const currentTheta = mesh.userData.baseAngle + currentScrollAngle;
+      // Normalize angle to find nearest frontal rotation target
+      const k = Math.round(-currentTheta / (Math.PI * 2));
+      const targetTheta = k * Math.PI * 2;
+      targetX = (targetTheta - mesh.userData.baseAngle) / 0.12;
+
+      gsap.to(streamGroup.rotation, {
+        x: 0,
+        y: 0,
+        z: 0,
+        duration: 1.0,
+        ease: 'power3.out'
+      });
+    } else {
+      targetX = mesh.position.x;
+      currentX = mesh.position.x;
+
       gsap.to(streamGroup.position, {
         x: -targetX,
         duration: 1.1,
@@ -418,8 +419,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function unfocusPanel() {
-    isFocused = false;
-
     if (focusedMesh) {
       gsap.to(focusedMesh.scale, {
         x: 1.0,
@@ -436,6 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ease: 'power3.out'
     });
 
+    isFocused = false;
     focusedMesh = null;
   }
 
@@ -445,31 +445,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (animationMode === 'spiral') {
       if (!isFocused) {
+        // Continuous smooth auto-rotation if not dragging or focused
+        if (!isDragging) {
+          targetX += 0.015;
+        }
+
         currentX += (targetX - currentX) * 0.08;
         streamGroup.position.set(0, 0, 0);
         streamGroup.rotation.x = mouse.y * 0.05;
         streamGroup.rotation.y = mouse.x * 0.05;
 
         const scrollAngle = currentX * 0.12;
-        const scrollY = currentX * 0.35;
+        const scrollY = (currentX % (totalItems * 2)) * 0.25;
 
         panels.forEach((panel) => {
           const theta = panel.userData.baseAngle + scrollAngle;
           panel.position.x = Math.sin(theta) * 5.8;
           panel.position.z = Math.cos(theta) * 5.8 - 5.8;
-          panel.position.y = panel.userData.baseY + scrollY;
+          panel.position.y = panel.userData.baseY + Math.sin(theta * 0.5) * 0.6;
           panel.rotation.y = theta;
           panel.rotation.x = 0.08;
 
           const distZ = Math.abs(panel.position.z);
           panel.material.opacity = Math.max(0.2, 1.0 - distZ * 0.08);
           panel.material.transparent = true;
-
-          if (isFocused && panel === focusedMesh) {
+          panel.renderOrder = 0;
+        });
+      } else {
+        // In Focused Mode: Dim all other panels so focused panel pops out cleanly!
+        panels.forEach((panel) => {
+          if (panel === focusedMesh) {
             panel.renderOrder = 10;
             panel.material.opacity = 1.0;
+            panel.material.transparent = false;
           } else {
             panel.renderOrder = 0;
+            panel.material.opacity = 0.15;
+            panel.material.transparent = true;
           }
         });
       }
