@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Raycaster & Mouse Tracking
   const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2(-100, -100);
+  const mouse = new THREE.Vector2(0, 0);
 
   window.addEventListener('mousemove', (e) => {
     // Normalized mouse coordinates for Raycaster
@@ -450,6 +450,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function animate() {
     requestAnimationFrame(animate);
 
+    // Hide background logo when focused so only the centered image is seen
+    logoMesh.visible = !isFocused;
+
     if (animationMode === 'spiral') {
       if (!isFocused) {
         // Continuous smooth auto-rotation
@@ -479,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
           panel.renderOrder = 0;
         });
       } else {
-        // In Focused Mode: Dim all other panels so focused panel pops out cleanly!
+        // In Focused Mode: Hide all background panels so ONLY the focused image is seen!
         panels.forEach((panel) => {
           if (panel === focusedMesh) {
             panel.renderOrder = 100;
@@ -487,7 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.material.transparent = false;
           } else {
             panel.renderOrder = 0;
-            panel.material.opacity = 0.10;
+            panel.material.opacity = 0.0;
             panel.material.transparent = true;
           }
         });
@@ -521,17 +524,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isFocused) {
           if (panel === focusedMesh) {
-            panel.renderOrder = 10;
+            panel.renderOrder = 100;
             panel.material.opacity = 1.0;
             panel.material.transparent = false;
           } else {
             panel.renderOrder = 0;
-            const bgScale = Math.max(0.65, 0.95 - distFromCenter * 0.08);
-            const bgOpacity = Math.max(0.15, 0.55 - distFromCenter * 0.15);
-
-            panel.scale.setScalar(bgScale);
-            panel.rotation.y = -worldX * 0.08;
-            panel.material.opacity = bgOpacity;
+            panel.material.opacity = 0.0;
             panel.material.transparent = true;
           }
         } else {
