@@ -239,8 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         if (animationMode === 'spiral') {
-          // Dynamic 3-4x speed responsiveness relative to auto-rotation
-          targetX += moveDeltaX * 0.0035;
+          // Fast, responsive 3D drag physics for comfortable navigation
+          targetX += moveDeltaX * 0.015;
         } else {
           // Stream mode drag physics along X axis
           const physDeltaX = deltaX * 0.012;
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else {
       if (animationMode === 'spiral') {
-        targetX += delta * 0.003;
+        targetX += delta * 0.012;
       } else {
         targetX += delta * 0.005;
       }
