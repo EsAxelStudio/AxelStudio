@@ -105,17 +105,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const textureLoader = new THREE.TextureLoader();
   let panels = [];
 
-  // Large AXEL STUDIO 3D Logo in Background (16:9 Aspect Ratio 5.8 x 3.26)
-  const logoTexture = textureLoader.load('/assets/axel_studio_logo.png?v=2');
+  // Large AXEL STUDIO 3D Logo in Background
+  const logoTexture = textureLoader.load('/assets/axel_studio_logo.png');
   logoTexture.minFilter = THREE.LinearFilter;
   logoTexture.magFilter = THREE.LinearFilter;
 
-  const logoGeo = new THREE.PlaneGeometry(5.8, 3.26);
+  const logoGeo = new THREE.PlaneGeometry(6.15, 2.4);
   const logoMat = new THREE.MeshBasicMaterial({
     map: logoTexture,
     transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending
+    depthWrite: false
   });
   const logoMesh = new THREE.Mesh(logoGeo, logoMat);
   logoMesh.position.set(0, 2.40, -0.6);
