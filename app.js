@@ -59,8 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const adminList = document.getElementById('adminList');
   const animationModeSelect = document.getElementById('animationModeSelect');
 
-  // Animation Mode State ('horizontal' vs 'cascade')
+  // Animation Mode State & Auto-Rotate Direction
   let animationMode = localStorage.getItem('axel_gallery_anim_mode') || 'horizontal';
+  let autoRotateDir = 1;
 
   // App State
   let targetX = 0;
@@ -239,8 +240,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         if (animationMode === 'spiral') {
-          // Fast, responsive 3D drag physics for comfortable navigation
+          // Fast, responsive 3D drag physics & dynamic rotation direction
           targetX += moveDeltaX * 0.015;
+          if (moveDeltaX > 2) autoRotateDir = 1;
+          else if (moveDeltaX < -2) autoRotateDir = -1;
         } else {
           // Stream mode drag physics along X axis
           const physDeltaX = deltaX * 0.012;
@@ -282,6 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       if (animationMode === 'spiral') {
         targetX += delta * 0.012;
+        if (delta > 2) autoRotateDir = 1;
+        else if (delta < -2) autoRotateDir = -1;
       } else {
         targetX += delta * 0.005;
       }
@@ -322,8 +327,12 @@ document.addEventListener('DOMContentLoaded', () => {
           focusNextPanel();
         }
       } else {
-        if (animationMode === 'spiral') targetX += 2.5;
-        else targetX += SPACING;
+        if (animationMode === 'spiral') {
+          targetX += 2.5;
+          autoRotateDir = 1;
+        } else {
+          targetX += SPACING;
+        }
       }
     }
     if (e.key === 'ArrowLeft') {
@@ -333,8 +342,12 @@ document.addEventListener('DOMContentLoaded', () => {
           focusPrevPanel();
         }
       } else {
-        if (animationMode === 'spiral') targetX -= 2.5;
-        else targetX -= SPACING;
+        if (animationMode === 'spiral') {
+          targetX -= 2.5;
+          autoRotateDir = -1;
+        } else {
+          targetX -= SPACING;
+        }
       }
     }
   });
@@ -464,9 +477,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (animationMode === 'spiral') {
       if (!isFocused) {
-        // Continuous smooth auto-rotation
+        // Continuous smooth auto-rotation following user's drag direction
         if (!isDragging) {
-          targetX += 0.012;
+          targetX += 0.012 * autoRotateDir;
         }
 
         currentX += (targetX - currentX) * 0.08;
