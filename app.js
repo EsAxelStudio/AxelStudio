@@ -163,16 +163,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const mesh = new THREE.Mesh(geometry, material);
 
-      if (animationMode === 'cascade') {
-        // Mode B: VibeCurb Home 3D Perspective Cascade Grid
-        const col = (index % 3) - 1; // -1, 0, 1
-        const row = Math.floor(index / 3);
-        mesh.position.x = col * 4.6;
-        mesh.position.y = -row * 3.1 - 0.2 + (col === 0 ? 0.35 : 0);
-        mesh.position.z = -row * 0.5 - Math.abs(col) * 0.3;
-        mesh.rotation.x = 0.05;
-        mesh.rotation.y = -col * 0.08;
-        mesh.userData = { index, item, initX: mesh.position.x, initY: mesh.position.y, initZ: mesh.position.z, initRotX: 0.05, initRotY: -col * 0.08 };
+      if (animationMode === 'spiral') {
+        // Mode B: 3D Spiral Helix Carousel
+        const R = 5.8;
+        const ANGLE_STEP = 0.55;
+        const Y_STEP = 1.35;
+        const theta = index * ANGLE_STEP;
+        mesh.position.x = Math.sin(theta) * R;
+        mesh.position.z = Math.cos(theta) * R - R;
+        mesh.position.y = -index * Y_STEP + 1.2;
+        mesh.rotation.y = theta;
+        mesh.rotation.x = 0.08;
+        mesh.userData = { index, item, baseAngle: theta, baseY: -index * Y_STEP + 1.2 };
       } else {
         // Mode A: Horizontal 3D Stream (Default untouched)
         mesh.position.x = index * SPACING;
@@ -187,8 +189,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     targetX = 0;
     currentX = 0;
-    targetY = animationMode === 'cascade' ? 0.6 : 0;
-    currentY = animationMode === 'cascade' ? 0.6 : 0;
+    targetY = 0;
+    currentY = 0;
     activeIndex = 0;
     isFocused = false;
     focusedMesh = null;
@@ -267,8 +269,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else focusPrevPanel();
       }
     } else {
-      if (animationMode === 'cascade') {
-        targetY += delta * 0.006;
+      if (animationMode === 'spiral') {
+        targetX += delta * 0.005;
       } else {
         targetX += delta * 0.005;
       }
@@ -310,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
           focusNextPanel();
         }
       } else {
-        if (animationMode === 'cascade') targetY += 2.0;
+        if (animationMode === 'spiral') targetX += 2.5;
         else targetX += SPACING;
       }
     }
@@ -321,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
           focusPrevPanel();
         }
       } else {
-        if (animationMode === 'cascade') targetY -= 2.0;
+        if (animationMode === 'spiral') targetX -= 2.5;
         else targetX -= SPACING;
       }
     }
@@ -353,12 +355,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update Counter & Title Badges immediately
     const formattedIndex = String(activeIndex + 1).padStart(2, '0');
     counterBadge.querySelector('p').textContent = `${formattedIndex}/${String(totalItems).padStart(2, '0')}`;
-    descText.textContent = showcaseItems[activeIndex].desc;
+    descText.textContent = showcaseItems[activeIndex] ? showcaseItems[activeIndex].desc : '';
 
-    targetX = mesh.position.x;
-    currentX = mesh.position.x;
-    targetY = -mesh.userData.initY;
-    currentY = -mesh.userData.initY;
+    if (animationMode === 'spiral') {
+      targetX = -mesh.userData.baseAngle / 0.12;
+      currentX = targetX;
+    } else {
+      targetX = mesh.position.x;
+      currentX = mesh.position.x;
+    }
 
     // Reset previous focused mesh scale
     if (prevMesh && prevMesh !== mesh) {
@@ -369,10 +374,10 @@ document.addEventListener('DOMContentLoaded', () => {
         duration: 0.8,
         ease: 'power2.out'
       });
-      if (animationMode === 'cascade') {
+      if (animationMode === 'spiral') {
         gsap.to(prevMesh.rotation, {
-          x: prevMesh.userData.initRotX,
-          y: prevMesh.userData.initRotY,
+          x: 0.08,
+          y: prevMesh.userData.baseAngle,
           z: 0,
           duration: 0.8,
           ease: 'power2.out'
@@ -380,13 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    if (animationMode === 'cascade') {
-      gsap.to(streamGroup.position, {
-        y: currentY,
-        duration: 1.1,
-        ease: 'power3.out'
-      });
-    } else {
+    if (animationMode !== 'spiral') {
       gsap.to(streamGroup.position, {
         x: -targetX,
         duration: 1.1,
@@ -429,16 +428,6 @@ document.addEventListener('DOMContentLoaded', () => {
         duration: 0.9,
         ease: 'power3.out'
       });
-
-      if (animationMode === 'cascade') {
-        gsap.to(focusedMesh.rotation, {
-          x: focusedMesh.userData.initRotX,
-          y: focusedMesh.userData.initRotY,
-          z: 0,
-          duration: 0.9,
-          ease: 'power3.out'
-        });
-      }
     }
 
     gsap.to(camera.position, {
@@ -454,35 +443,36 @@ document.addEventListener('DOMContentLoaded', () => {
   function animate() {
     requestAnimationFrame(animate);
 
-    if (animationMode === 'cascade') {
+    if (animationMode === 'spiral') {
       if (!isFocused) {
-        currentY += (targetY - currentY) * 0.08;
-        streamGroup.position.y = currentY;
-        streamGroup.position.x = 0;
-        streamGroup.rotation.x = mouse.y * 0.08;
-        streamGroup.rotation.y = mouse.x * 0.08;
-      } else {
-        streamGroup.rotation.x = 0;
-        streamGroup.rotation.y = 0;
-      }
+        currentX += (targetX - currentX) * 0.08;
+        streamGroup.position.set(0, 0, 0);
+        streamGroup.rotation.x = mouse.y * 0.05;
+        streamGroup.rotation.y = mouse.x * 0.05;
 
-      panels.forEach((panel) => {
-        if (isFocused) {
-          if (panel === focusedMesh) {
+        const scrollAngle = currentX * 0.12;
+        const scrollY = currentX * 0.35;
+
+        panels.forEach((panel) => {
+          const theta = panel.userData.baseAngle + scrollAngle;
+          panel.position.x = Math.sin(theta) * 5.8;
+          panel.position.z = Math.cos(theta) * 5.8 - 5.8;
+          panel.position.y = panel.userData.baseY + scrollY;
+          panel.rotation.y = theta;
+          panel.rotation.x = 0.08;
+
+          const distZ = Math.abs(panel.position.z);
+          panel.material.opacity = Math.max(0.2, 1.0 - distZ * 0.08);
+          panel.material.transparent = true;
+
+          if (isFocused && panel === focusedMesh) {
             panel.renderOrder = 10;
             panel.material.opacity = 1.0;
-            panel.material.transparent = false;
           } else {
             panel.renderOrder = 0;
-            panel.material.opacity = 0.25;
-            panel.material.transparent = true;
           }
-        } else {
-          panel.renderOrder = 0;
-          panel.material.opacity = 0.95;
-          panel.material.transparent = true;
-        }
-      });
+        });
+      }
     } else {
       // Horizontal mode (original 100% untouched)
       if (!isFocused) {
@@ -545,8 +535,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       panels.forEach((panel) => {
         let dist = 0;
-        if (animationMode === 'cascade') {
-          dist = Math.abs((panel.position.y + streamGroup.position.y));
+        if (animationMode === 'spiral') {
+          dist = Math.abs(panel.position.z);
         } else {
           const currentStreamX = -streamGroup.position.x;
           dist = Math.abs(panel.position.x - currentStreamX);
