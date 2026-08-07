@@ -427,8 +427,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ease: 'power3.out'
     });
 
-    // Add 360 degree spin turn effect for all panels when opening to center
-    mesh.rotation.y += Math.PI * 2 * (autoRotateDir || 1);
+    // Add 180 degree spin turn effect for all panels when opening to center
+    mesh.rotation.y += Math.PI * (autoRotateDir || 1);
 
     // Straighten rotation to face 100% frontal to camera (0 deg)
     gsap.to(mesh.rotation, {
