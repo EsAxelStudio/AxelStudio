@@ -205,6 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2(0, 0);
 
+  let lastMouseX = 0;
+
   window.addEventListener('mousemove', (e) => {
     // Normalized mouse coordinates for Raycaster
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -213,6 +215,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dragging physics
     if (isDragging) {
       const deltaX = e.clientX - dragStartX;
+      const moveDeltaX = e.clientX - lastMouseX;
+      lastMouseX = e.clientX;
+
       if (Math.abs(deltaX) > 6) {
         wasDragged = true;
       }
@@ -234,13 +239,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         if (animationMode === 'spiral') {
-          targetX += (deltaX * 0.005);
+          // Slow, smooth incremental 3D drag physics
+          targetX += moveDeltaX * 0.0008;
         } else {
           // Stream mode drag physics along X axis
           const physDeltaX = deltaX * 0.012;
           targetX = dragStartTargetX - physDeltaX;
         }
       }
+    } else {
+      lastMouseX = e.clientX;
     }
   });
 
@@ -250,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     isDragging = true;
     wasDragged = false;
     dragStartX = e.clientX;
+    lastMouseX = e.clientX;
     lastStepX = e.clientX;
     dragStartTargetX = targetX;
   });
@@ -272,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else {
       if (animationMode === 'spiral') {
-        targetX += delta * 0.005;
+        targetX += delta * 0.0012;
       } else {
         targetX += delta * 0.005;
       }
