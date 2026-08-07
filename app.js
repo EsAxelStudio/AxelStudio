@@ -164,17 +164,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const mesh = new THREE.Mesh(geometry, material);
 
       if (animationMode === 'spiral') {
-        // Mode B: 3D Spiral Helix Carousel
-        const R = 5.8;
-        const ANGLE_STEP = 0.55;
-        const Y_STEP = 1.35;
+        // Mode B: 3D Spiral Helix Carousel (Amplia separación e inversión de giro ascendente)
+        const R = 6.8;
+        const ANGLE_STEP = 0.72;
+        const Y_STEP = 1.7;
         const theta = index * ANGLE_STEP;
         mesh.position.x = Math.sin(theta) * R;
         mesh.position.z = Math.cos(theta) * R - R;
-        mesh.position.y = -index * Y_STEP + 1.2;
+        mesh.position.y = index * Y_STEP - 4.5;
         mesh.rotation.y = theta;
         mesh.rotation.x = 0.08;
-        mesh.userData = { index, item, baseAngle: theta, baseY: -index * Y_STEP + 1.2 };
+        mesh.userData = { index, item, baseAngle: theta, baseY: index * Y_STEP - 4.5 };
       } else {
         // Mode A: Horizontal 3D Stream (Default untouched)
         mesh.position.x = index * SPACING;
@@ -235,9 +235,13 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       } else {
-        // Stream mode drag physics along X axis
-        const physDeltaX = deltaX * 0.012;
-        targetX = dragStartTargetX - physDeltaX;
+        if (animationMode === 'spiral') {
+          targetX -= (deltaX * 0.005);
+        } else {
+          // Stream mode drag physics along X axis
+          const physDeltaX = deltaX * 0.012;
+          targetX = dragStartTargetX - physDeltaX;
+        }
       }
     }
   });
@@ -270,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else {
       if (animationMode === 'spiral') {
-        targetX += delta * 0.005;
+        targetX -= delta * 0.005;
       } else {
         targetX += delta * 0.005;
       }
@@ -312,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
           focusNextPanel();
         }
       } else {
-        if (animationMode === 'spiral') targetX += 2.5;
+        if (animationMode === 'spiral') targetX -= 2.5;
         else targetX += SPACING;
       }
     }
@@ -323,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
           focusPrevPanel();
         }
       } else {
-        if (animationMode === 'spiral') targetX -= 2.5;
+        if (animationMode === 'spiral') targetX += 2.5;
         else targetX -= SPACING;
       }
     }
@@ -352,6 +356,14 @@ document.addEventListener('DOMContentLoaded', () => {
     focusedMesh = mesh;
     activeIndex = mesh.userData.index;
 
+    // Save current transform so we can animate back smoothly on close
+    mesh.userData.savedX = mesh.position.x;
+    mesh.userData.savedY = mesh.position.y;
+    mesh.userData.savedZ = mesh.position.z;
+    mesh.userData.savedRotX = mesh.rotation.x;
+    mesh.userData.savedRotY = mesh.rotation.y;
+    mesh.userData.savedRotZ = mesh.rotation.z;
+
     // Update Counter & Title Badges immediately
     const formattedIndex = String(activeIndex + 1).padStart(2, '0');
     counterBadge.querySelector('p').textContent = `${formattedIndex}/${String(totalItems).padStart(2, '0')}`;
@@ -365,17 +377,32 @@ document.addEventListener('DOMContentLoaded', () => {
         duration: 0.8,
         ease: 'power2.out'
       });
+      if (animationMode === 'spiral') {
+        gsap.to(prevMesh.position, {
+          x: prevMesh.userData.savedX,
+          y: prevMesh.userData.savedY,
+          z: prevMesh.userData.savedZ,
+          duration: 0.8,
+          ease: 'power2.out'
+        });
+        gsap.to(prevMesh.rotation, {
+          x: prevMesh.userData.savedRotX,
+          y: prevMesh.userData.savedRotY,
+          z: prevMesh.userData.savedRotZ,
+          duration: 0.8,
+          ease: 'power2.out'
+        });
+      }
     }
 
     if (animationMode === 'spiral') {
-      // Calculate angle offset to bring clicked panel directly to front center
-      const currentScrollAngle = currentX * 0.12;
-      const currentTheta = mesh.userData.baseAngle + currentScrollAngle;
-      // Normalize angle to find nearest frontal rotation target
-      const k = Math.round(-currentTheta / (Math.PI * 2));
-      const targetTheta = k * Math.PI * 2;
-      targetX = (targetTheta - mesh.userData.baseAngle) / 0.12;
-
+      gsap.to(mesh.position, {
+        x: 0,
+        y: 0,
+        z: 3.2,
+        duration: 1.1,
+        ease: 'power3.out'
+      });
       gsap.to(streamGroup.rotation, {
         x: 0,
         y: 0,
@@ -420,7 +447,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function unfocusPanel() {
     if (focusedMesh) {
-      gsap.to(focusedMesh.scale, {
+      const mesh = focusedMesh;
+
+      if (animationMode === 'spiral') {
+        gsap.to(mesh.position, {
+          x: mesh.userData.savedX,
+          y: mesh.userData.savedY,
+          z: mesh.userData.savedZ,
+          duration: 0.9,
+          ease: 'power3.out'
+        });
+        gsap.to(mesh.rotation, {
+          x: mesh.userData.savedRotX,
+          y: mesh.userData.savedRotY,
+          z: mesh.userData.savedRotZ,
+          duration: 0.9,
+          ease: 'power3.out'
+        });
+      }
+
+      gsap.to(mesh.scale, {
         x: 1.0,
         y: 1.0,
         z: 1.0,
@@ -445,24 +491,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (animationMode === 'spiral') {
       if (!isFocused) {
-        // Continuous smooth auto-rotation if not dragging or focused
+        // Continuous smooth auto-rotation moving UPWARDS and RIGHTWARDS
         if (!isDragging) {
-          targetX += 0.015;
+          targetX -= 0.012;
         }
 
         currentX += (targetX - currentX) * 0.08;
         streamGroup.position.set(0, 0, 0);
-        streamGroup.rotation.x = mouse.y * 0.05;
-        streamGroup.rotation.y = mouse.x * 0.05;
+        streamGroup.rotation.x = mouse.y * 0.04;
+        streamGroup.rotation.y = mouse.x * 0.04;
 
-        const scrollAngle = currentX * 0.12;
-        const scrollY = (currentX % (totalItems * 2)) * 0.25;
+        const scrollAngle = -currentX * 0.12;
+        const scrollY = -currentX * 0.28;
+        const loopRange = totalItems * 1.7;
 
         panels.forEach((panel) => {
           const theta = panel.userData.baseAngle + scrollAngle;
-          panel.position.x = Math.sin(theta) * 5.8;
-          panel.position.z = Math.cos(theta) * 5.8 - 5.8;
-          panel.position.y = panel.userData.baseY + Math.sin(theta * 0.5) * 0.6;
+          let yPos = panel.userData.baseY + scrollY;
+
+          // Infinite smooth vertical loop wrap-around
+          while (yPos > loopRange / 2) {
+            yPos -= loopRange;
+          }
+          while (yPos < -loopRange / 2) {
+            yPos += loopRange;
+          }
+
+          const R = 6.8;
+          panel.position.x = Math.sin(theta) * R;
+          panel.position.z = Math.cos(theta) * R - R;
+          panel.position.y = yPos;
           panel.rotation.y = theta;
           panel.rotation.x = 0.08;
 
@@ -480,7 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.material.transparent = false;
           } else {
             panel.renderOrder = 0;
-            panel.material.opacity = 0.15;
+            panel.material.opacity = 0.10;
             panel.material.transparent = true;
           }
         });
