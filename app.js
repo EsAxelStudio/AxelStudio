@@ -164,17 +164,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const mesh = new THREE.Mesh(geometry, material);
 
       if (animationMode === 'spiral') {
-        // Mode B: 3D Spiral Helix Carousel (Amplia separación e inversión de giro ascendente)
-        const R = 6.8;
-        const ANGLE_STEP = 0.72;
-        const Y_STEP = 1.7;
+        // Mode B: 3D Spiral Ribbon Carousel (Paso exacto por el centro a la altura de la vista y=0)
+        const R = 6.2;
+        const ANGLE_STEP = (Math.PI * 2) / totalItems;
         const theta = index * ANGLE_STEP;
         mesh.position.x = Math.sin(theta) * R;
+        mesh.position.y = Math.sin(theta) * 2.2;
         mesh.position.z = Math.cos(theta) * R - R;
-        mesh.position.y = index * Y_STEP - 4.5;
         mesh.rotation.y = theta;
-        mesh.rotation.x = 0.08;
-        mesh.userData = { index, item, baseAngle: theta, baseY: index * Y_STEP - 4.5 };
+        mesh.userData = { index, item, baseAngle: theta };
       } else {
         // Mode A: Horizontal 3D Stream (Default untouched)
         mesh.position.x = index * SPACING;
@@ -236,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         if (animationMode === 'spiral') {
-          targetX -= (deltaX * 0.005);
+          targetX += (deltaX * 0.005);
         } else {
           // Stream mode drag physics along X axis
           const physDeltaX = deltaX * 0.012;
@@ -274,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else {
       if (animationMode === 'spiral') {
-        targetX -= delta * 0.005;
+        targetX += delta * 0.005;
       } else {
         targetX += delta * 0.005;
       }
@@ -316,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
           focusNextPanel();
         }
       } else {
-        if (animationMode === 'spiral') targetX -= 2.5;
+        if (animationMode === 'spiral') targetX += 2.5;
         else targetX += SPACING;
       }
     }
@@ -327,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
           focusPrevPanel();
         }
       } else {
-        if (animationMode === 'spiral') targetX += 2.5;
+        if (animationMode === 'spiral') targetX -= 2.5;
         else targetX -= SPACING;
       }
     }
@@ -356,14 +354,6 @@ document.addEventListener('DOMContentLoaded', () => {
     focusedMesh = mesh;
     activeIndex = mesh.userData.index;
 
-    // Save current transform so we can animate back smoothly on close
-    mesh.userData.savedX = mesh.position.x;
-    mesh.userData.savedY = mesh.position.y;
-    mesh.userData.savedZ = mesh.position.z;
-    mesh.userData.savedRotX = mesh.rotation.x;
-    mesh.userData.savedRotY = mesh.rotation.y;
-    mesh.userData.savedRotZ = mesh.rotation.z;
-
     // Update Counter & Title Badges immediately
     const formattedIndex = String(activeIndex + 1).padStart(2, '0');
     counterBadge.querySelector('p').textContent = `${formattedIndex}/${String(totalItems).padStart(2, '0')}`;
@@ -377,25 +367,14 @@ document.addEventListener('DOMContentLoaded', () => {
         duration: 0.8,
         ease: 'power2.out'
       });
-      if (animationMode === 'spiral') {
-        gsap.to(prevMesh.position, {
-          x: prevMesh.userData.savedX,
-          y: prevMesh.userData.savedY,
-          z: prevMesh.userData.savedZ,
-          duration: 0.8,
-          ease: 'power2.out'
-        });
-        gsap.to(prevMesh.rotation, {
-          x: prevMesh.userData.savedRotX,
-          y: prevMesh.userData.savedRotY,
-          z: prevMesh.userData.savedRotZ,
-          duration: 0.8,
-          ease: 'power2.out'
-        });
-      }
     }
 
     if (animationMode === 'spiral') {
+      // Find exact scroll position to align clicked panel front & center at eye height (y=0, z=0)
+      const targetScrollAngle = -mesh.userData.baseAngle;
+      targetX = targetScrollAngle / 0.08;
+      currentX = targetX;
+
       gsap.to(mesh.position, {
         x: 0,
         y: 0,
@@ -449,23 +428,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (focusedMesh) {
       const mesh = focusedMesh;
 
-      if (animationMode === 'spiral') {
-        gsap.to(mesh.position, {
-          x: mesh.userData.savedX,
-          y: mesh.userData.savedY,
-          z: mesh.userData.savedZ,
-          duration: 0.9,
-          ease: 'power3.out'
-        });
-        gsap.to(mesh.rotation, {
-          x: mesh.userData.savedRotX,
-          y: mesh.userData.savedRotY,
-          z: mesh.userData.savedRotZ,
-          duration: 0.9,
-          ease: 'power3.out'
-        });
-      }
-
       gsap.to(mesh.scale, {
         x: 1.0,
         y: 1.0,
@@ -491,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (animationMode === 'spiral') {
       if (!isFocused) {
-        // Continuous smooth auto-rotation moving UPWARDS across FRONT towards right
+        // Continuous smooth auto-rotation
         if (!isDragging) {
           targetX += 0.012;
         }
@@ -501,28 +463,16 @@ document.addEventListener('DOMContentLoaded', () => {
         streamGroup.rotation.x = mouse.y * 0.04;
         streamGroup.rotation.y = mouse.x * 0.04;
 
-        const scrollAngle = currentX * 0.12;
-        const scrollY = currentX * 0.28;
-        const loopRange = totalItems * 1.7;
+        const scrollAngle = currentX * 0.08;
 
         panels.forEach((panel) => {
           const theta = panel.userData.baseAngle + scrollAngle;
-          let yPos = panel.userData.baseY + scrollY;
-
-          // Infinite smooth vertical loop wrap-around
-          while (yPos > loopRange / 2) {
-            yPos -= loopRange;
-          }
-          while (yPos < -loopRange / 2) {
-            yPos += loopRange;
-          }
-
-          const R = 6.8;
+          const R = 6.2;
           panel.position.x = Math.sin(theta) * R;
-          panel.position.z = Math.cos(theta) * R - R;
-          panel.position.y = yPos;
-          panel.rotation.y = theta;
-          panel.rotation.x = 0.08;
+          panel.position.y = Math.sin(theta) * 2.2;  // AT THETA=0 -> Y=0 (DEAD CENTER EYE HEIGHT!)
+          panel.position.z = Math.cos(theta) * R - R; // AT THETA=0 -> Z=0 (FRONTMOS T!)
+          panel.rotation.y = theta;                   // AT THETA=0 -> ROTATION=0 (100% FLAT FRONT!)
+          panel.rotation.x = 0.05 * Math.cos(theta);
 
           const distZ = Math.abs(panel.position.z);
           panel.material.opacity = Math.max(0.2, 1.0 - distZ * 0.08);
