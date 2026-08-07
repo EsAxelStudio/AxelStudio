@@ -289,14 +289,13 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (hoveredMesh) {
-      if (isFocused && focusedMesh === hoveredMesh) {
-        unfocusPanel();
-      } else {
-        focusPanel(hoveredMesh);
-      }
-    } else if (isFocused) {
+    if (isFocused) {
       unfocusPanel();
+      return;
+    }
+
+    if (hoveredMesh) {
+      focusPanel(hoveredMesh);
     }
   });
 
@@ -483,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // In Focused Mode: Dim all other panels so focused panel pops out cleanly!
         panels.forEach((panel) => {
           if (panel === focusedMesh) {
-            panel.renderOrder = 10;
+            panel.renderOrder = 100;
             panel.material.opacity = 1.0;
             panel.material.transparent = false;
           } else {
