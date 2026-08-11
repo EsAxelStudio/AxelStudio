@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (Array.isArray(parsed) && parsed.length > 0) {
         showcaseItems = parsed.map(item => ({
           ...item,
-          src: item.src.startsWith('/') ? item.src.substring(1) : item.src
+          src: item.src.replace(/^(\.|\/)+/, '')
         }));
       } else {
         showcaseItems = [...defaultShowcaseItems];
