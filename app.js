@@ -141,7 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
     streamGroup.rotation.set(0, 0, 0);
 
     showcaseItems.forEach((item, index) => {
-      const geometry = new THREE.PlaneGeometry(4.0, 2.3, 32, 32);
+      // 16:9 Aspect Ratio (4.0 x 2.25)
+      const geometry = new THREE.PlaneGeometry(4.0, 2.25, 32, 32);
       
       // Slight curve to panels for cylindrical depth
       const pos = geometry.attributes.position;
