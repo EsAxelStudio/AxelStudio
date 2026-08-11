@@ -56,22 +56,22 @@
   <div id="webgl-container" class="h-screen w-full relative overflow-hidden"></div>
 
   <!-- Bottom Active Index Indicator (01/09) & Info Footer -->
-  <div class="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 text-center max-w-lg px-4 pointer-events-none space-y-1">
+  <div class="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 text-center w-full max-w-2xl px-4 pointer-events-none space-y-1.5">
     
     <div id="counter-badge" class="mix-blend-exclusion text-white">
       <p class="text-center text-xs font-bold tracking-widest font-sans m-0">01/09</p>
     </div>
 
     <div id="desc-badge" class="mix-blend-exclusion text-white">
-      <p id="desc-text" class="text-center text-sm font-semibold tracking-wide font-sans m-0">Axel Studio 01</p>
+      <p id="desc-text" class="text-center text-sm md:text-base font-semibold tracking-wide font-sans m-0">Axel Studio 01</p>
     </div>
 
-    <!-- Contact Email Badge -->
-    <div class="pt-1.5 pointer-events-auto">
-      <p class="text-xs md:text-sm font-medium text-white/90 m-0 pb-1 tracking-wide font-sans">
+    <!-- Contact Invitation & Email Badge -->
+    <div class="pt-1 pointer-events-auto flex flex-col items-center gap-1.5">
+      <p class="text-xs md:text-sm font-medium text-white/95 m-0 tracking-wide font-sans drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
         Si te gusta mi trabajo y te interesa tener unas miniaturas similares ponte en contacto conmigo en:
       </p>
-      <a href="mailto:esaxelstudio@gmail.com" class="inline-flex items-center gap-1.5 text-xs md:text-sm text-[#00f2fe] hover:text-[#5ce2e6] transition-colors no-underline font-semibold bg-black/75 backdrop-blur-md px-4 py-1.5 rounded-full border border-[#00f2fe]/40 shadow-xl font-sans">
+      <a href="mailto:esaxelstudio@gmail.com" class="inline-flex items-center gap-1.5 text-xs md:text-sm text-[#00f2fe] hover:text-[#5ce2e6] transition-colors no-underline font-semibold bg-black/80 backdrop-blur-md px-4 py-1.5 rounded-full border border-[#00f2fe]/40 shadow-xl">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
           <polyline points="22,6 12,13 2,6"></polyline>
@@ -81,7 +81,7 @@
     </div>
 
     <!-- Disclaimer Note -->
-    <p class="text-[10px] md:text-[11px] text-white/50 leading-tight max-w-md mx-auto m-0 pt-0.5 font-normal tracking-wide pointer-events-auto">
+    <p class="text-[10px] md:text-[11px] text-white/50 leading-tight max-w-lg mx-auto m-0 pt-0.5 font-normal tracking-wide pointer-events-auto">
       * Algunas miniaturas son ediciones sobre trabajos de otros canales, como muestra de nuestro servicio de mejora de miniaturas.
     </p>
 
