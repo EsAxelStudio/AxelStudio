@@ -7,15 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Default Showcase Items
   const defaultShowcaseItems = [
-    { src: '/assets/showcase/thumbnail-01.webp', desc: 'Axel Studio 01' },
-    { src: '/assets/showcase/thumbnail-02.webp', desc: 'Axel Studio 02' },
-    { src: '/assets/showcase/thumbnail-03.webp', desc: 'Axel Studio 03' },
-    { src: '/assets/showcase/thumbnail-04.webp', desc: 'Axel Studio 04' },
-    { src: '/assets/showcase/thumbnail-05.webp', desc: 'Axel Studio 05' },
-    { src: '/assets/showcase/thumbnail-06.webp', desc: 'Axel Studio 06' },
-    { src: '/assets/showcase/thumbnail-07.webp', desc: 'Axel Studio 07' },
-    { src: '/assets/showcase/thumbnail-08.webp', desc: 'Axel Studio 08' },
-    { src: '/assets/showcase/thumbnail-09.webp', desc: 'Axel Studio 09' }
+    { src: 'assets/showcase/thumbnail-01.webp', desc: 'Axel Studio 01' },
+    { src: 'assets/showcase/thumbnail-02.webp', desc: 'Axel Studio 02' },
+    { src: 'assets/showcase/thumbnail-03.webp', desc: 'Axel Studio 03' },
+    { src: 'assets/showcase/thumbnail-04.webp', desc: 'Axel Studio 04' },
+    { src: 'assets/showcase/thumbnail-05.webp', desc: 'Axel Studio 05' },
+    { src: 'assets/showcase/thumbnail-06.webp', desc: 'Axel Studio 06' },
+    { src: 'assets/showcase/thumbnail-07.webp', desc: 'Axel Studio 07' },
+    { src: 'assets/showcase/thumbnail-08.webp', desc: 'Axel Studio 08' },
+    { src: 'assets/showcase/thumbnail-09.webp', desc: 'Axel Studio 09' }
   ];
 
   // Active Showcase Items (Load from localStorage if available)
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (Array.isArray(parsed) && parsed.length > 0) {
         showcaseItems = parsed.map(item => ({
           ...item,
-          src: item.src.startsWith('./assets/') ? item.src.replace('./assets/', '/assets/') : item.src
+          src: item.src.startsWith('/') ? item.src.substring(1) : item.src
         }));
       } else {
         showcaseItems = [...defaultShowcaseItems];
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let panels = [];
 
   // Large AXEL STUDIO 3D Logo in Background
-  const logoTexture = textureLoader.load('/assets/axel_studio_logo.png');
+  const logoTexture = textureLoader.load('assets/axel_studio_logo.png');
   logoTexture.minFilter = THREE.LinearFilter;
   logoTexture.magFilter = THREE.LinearFilter;
 
