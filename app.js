@@ -197,8 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
     hoveredMesh = null;
 
     const formattedIndex = String(1).padStart(2, '0');
-    counterBadge.querySelector('p').textContent = `${formattedIndex}/${String(totalItems).padStart(2, '0')}`;
-    descText.textContent = showcaseItems[0] ? showcaseItems[0].desc : '';
+    if (counterBadge && counterBadge.querySelector('p')) counterBadge.querySelector('p').textContent = `${formattedIndex}/${String(totalItems).padStart(2, '0')}`;
+    if (descText) descText.textContent = showcaseItems[0] ? showcaseItems[0].desc : '';
   }
 
   buildPanels();
@@ -377,10 +377,6 @@ document.addEventListener('DOMContentLoaded', () => {
     activeIndex = mesh.userData.index;
 
     // Update Counter & Title Badges immediately
-    const formattedIndex = String(activeIndex + 1).padStart(2, '0');
-    counterBadge.querySelector('p').textContent = `${formattedIndex}/${String(totalItems).padStart(2, '0')}`;
-    descText.textContent = showcaseItems[activeIndex] ? showcaseItems[activeIndex].desc : '';
-
     if (prevMesh && prevMesh !== mesh) {
       gsap.to(prevMesh.scale, {
         x: 1.0,
@@ -390,6 +386,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ease: 'power2.out'
       });
     }
+
+    const formattedIndex = String(activeIndex + 1).padStart(2, '0');
+    if (counterBadge && counterBadge.querySelector('p')) counterBadge.querySelector('p').textContent = `${formattedIndex}/${String(totalItems).padStart(2, '0')}`;
+    if (descText) descText.textContent = showcaseItems[activeIndex] ? showcaseItems[activeIndex].desc : '';
 
     if (animationMode === 'spiral') {
       // Find exact scroll position to align clicked panel front & center at eye height (y=0, z=0)
@@ -572,16 +572,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (!isFocused) {
-      // Calculate nearest active index
-      let closestIdx = 0;
       let minDistance = Infinity;
+      let closestIdx = activeIndex;
+      const currentStreamX = -streamGroup.position.x;
+      const scrollAngle = currentX * 0.08;
 
       panels.forEach((panel) => {
         let dist = 0;
         if (animationMode === 'spiral') {
-          dist = Math.abs(panel.position.z);
+          const theta = panel.userData.baseAngle + scrollAngle;
+          const normAngle = Math.atan2(Math.sin(theta), Math.cos(theta));
+          dist = Math.abs(normAngle);
         } else {
-          const currentStreamX = -streamGroup.position.x;
           dist = Math.abs(panel.position.x - currentStreamX);
         }
 
@@ -594,8 +596,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (closestIdx !== activeIndex) {
         activeIndex = closestIdx;
         const formattedIndex = String(activeIndex + 1).padStart(2, '0');
-        counterBadge.querySelector('p').textContent = `${formattedIndex}/${String(totalItems).padStart(2, '0')}`;
-        descText.textContent = showcaseItems[activeIndex] ? showcaseItems[activeIndex].desc : '';
+        if (counterBadge && counterBadge.querySelector('p')) counterBadge.querySelector('p').textContent = `${formattedIndex}/${String(totalItems).padStart(2, '0')}`;
+        if (descText) descText.textContent = showcaseItems[activeIndex] ? showcaseItems[activeIndex].desc : '';
       }
     }
 
