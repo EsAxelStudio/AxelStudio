@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isFocused) {
         // Continuous smooth auto-rotation following user's drag direction
         if (!isDragging) {
-          targetX -= 0.012 * autoRotateDir;
+          targetX += 0.012 * autoRotateDir;
         }
 
         currentX += (targetX - currentX) * 0.08;
