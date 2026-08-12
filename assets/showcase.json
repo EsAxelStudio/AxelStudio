@@ -2,7 +2,7 @@
   "animationMode": "spiral",
   "items": [
     {
-      "src": "./assets/showcase/11e.jpg",
+      "src": "assets/showcase/11e.jpg",
       "desc": "11e"
     },
     {
@@ -14,11 +14,15 @@
       "desc": "Axel Studio 02"
     },
     {
+      "src": "./assets/showcase/14.jpg",
+      "desc": "14"
+    },
+    {
       "src": "assets/showcase/thumbnail-03.webp",
       "desc": "Axel Studio 03"
     },
     {
-      "src": "./assets/showcase/Axel_Studio_11.jpg",
+      "src": "assets/showcase/Axel_Studio_11.jpg",
       "desc": "Axel Studio 11"
     },
     {
@@ -30,7 +34,7 @@
       "desc": "Axel Studio 04"
     },
     {
-      "src": "./assets/showcase/12.jpg",
+      "src": "assets/showcase/12.jpg",
       "desc": "12"
     },
     {
