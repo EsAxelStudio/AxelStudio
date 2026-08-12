@@ -166,13 +166,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const mesh = new THREE.Mesh(geometry, material);
 
       if (animationMode === 'spiral') {
-        // Mode B: 3D Spiral Ribbon Carousel (Radio dinámico auto-ajustado según el número de fotos para evitar solapamientos)
-        const MIN_ARC_GAP = 5.4; // Ancho (4.0) + Espaciado de holgura (1.4)
-        const R = Math.max(6.8, (totalItems * MIN_ARC_GAP) / (Math.PI * 2));
+        // Mode B: 3D Spiral Ribbon Carousel (Amplio radio dinámico para cero solapamiento visual)
+        const MIN_ARC_GAP = 7.5; // Ancho (4.0) + Generosa holgura lateral (3.5)
+        const R = Math.max(9.5, (totalItems * MIN_ARC_GAP) / (Math.PI * 2));
         const ANGLE_STEP = (Math.PI * 2) / totalItems;
         const theta = index * ANGLE_STEP;
         mesh.position.x = Math.sin(theta) * R;
-        mesh.position.y = Math.sin(theta) * 2.5;
+        mesh.position.y = Math.sin(theta) * 3.6;
         mesh.position.z = Math.cos(theta) * R - R;
         mesh.rotation.y = theta;
         mesh.userData = { index, item, baseAngle: theta };
@@ -493,13 +493,13 @@ document.addEventListener('DOMContentLoaded', () => {
         streamGroup.rotation.y = mouse.x * 0.04;
 
         const scrollAngle = currentX * 0.08;
-        const MIN_ARC_GAP = 5.4;
-        const R = Math.max(6.8, (totalItems * MIN_ARC_GAP) / (Math.PI * 2));
+        const MIN_ARC_GAP = 7.5;
+        const R = Math.max(9.5, (totalItems * MIN_ARC_GAP) / (Math.PI * 2));
 
         panels.forEach((panel) => {
           const theta = panel.userData.baseAngle + scrollAngle;
           panel.position.x = Math.sin(theta) * R;
-          panel.position.y = Math.sin(theta) * 2.5;  // AT THETA=0 -> Y=0 (DEAD CENTER EYE HEIGHT!)
+          panel.position.y = Math.sin(theta) * 3.6;  // AT THETA=0 -> Y=0 (DEAD CENTER EYE HEIGHT!)
           panel.position.z = Math.cos(theta) * R - R; // AT THETA=0 -> Z=0 (FRONTMOS T!)
           panel.rotation.y = theta;                   // AT THETA=0 -> ROTATION=0 (100% FLAT FRONT!)
           panel.rotation.x = 0.05 * Math.cos(theta);
