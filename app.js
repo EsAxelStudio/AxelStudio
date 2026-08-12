@@ -21,7 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
     { src: 'assets/showcase/brandkit.png', desc: 'Axel Studio 12' }
   ];
 
-  // Active Showcase Items (Load from assets/showcase.json or fallback)
+  // Clean up any legacy localStorage that might override permanent config
+  try {
+    localStorage.removeItem('axel_gallery_order');
+    localStorage.removeItem('axel_gallery_anim_mode');
+  } catch (e) {}
+
+  // Active Showcase Items (Load 100% from assets/showcase.json)
   let showcaseItems = [...defaultShowcaseItems];
 
   fetch('assets/showcase.json?v=' + Date.now())
@@ -831,13 +837,12 @@ document.addEventListener('DOMContentLoaded', () => {
     showcaseItems = JSON.parse(JSON.stringify(workingItems));
     if (animationModeSelect) {
       animationMode = animationModeSelect.value;
-      try {
-        localStorage.setItem('axel_gallery_anim_mode', animationMode);
-      } catch (e) {}
     }
 
+    // Clean up any stale localStorage
     try {
-      localStorage.setItem('axel_gallery_order', JSON.stringify(showcaseItems));
+      localStorage.removeItem('axel_gallery_order');
+      localStorage.removeItem('axel_gallery_anim_mode');
     } catch (e) {}
 
     // Send POST /api/save-config to save PERMANENTLY to assets/showcase.json and push live to GitHub!
