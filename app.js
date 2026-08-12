@@ -5,7 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Default Showcase Items
+  // Default Showcase Items (12 Items)
   const defaultShowcaseItems = [
     { src: 'assets/showcase/thumbnail-01.webp', desc: 'Axel Studio 01' },
     { src: 'assets/showcase/thumbnail-02.webp', desc: 'Axel Studio 02' },
@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
     { src: 'assets/showcase/thumbnail-06.webp', desc: 'Axel Studio 06' },
     { src: 'assets/showcase/thumbnail-07.webp', desc: 'Axel Studio 07' },
     { src: 'assets/showcase/thumbnail-08.webp', desc: 'Axel Studio 08' },
-    { src: 'assets/showcase/thumbnail-09.webp', desc: 'Axel Studio 09' }
+    { src: 'assets/showcase/thumbnail-09.webp', desc: 'Axel Studio 09' },
+    { src: 'assets/showcase/awwwardshero.png', desc: 'Axel Studio 10' },
+    { src: 'assets/showcase/PixelPerfect.png', desc: 'Axel Studio 11' },
+    { src: 'assets/showcase/brandkit.png', desc: 'Axel Studio 12' }
   ];
 
   // Active Showcase Items (Load from localStorage if available)
@@ -59,8 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const adminList = document.getElementById('adminList');
   const animationModeSelect = document.getElementById('animationModeSelect');
 
-  // Animation Mode State & Auto-Rotate Direction
-  let animationMode = localStorage.getItem('axel_gallery_anim_mode') || 'horizontal';
+  // Animation Mode State & Auto-Rotate Direction (Default to 'spiral' 3D Helix)
+  let animationMode = localStorage.getItem('axel_gallery_anim_mode') || 'spiral';
   let autoRotateDir = 1;
 
   // App State
