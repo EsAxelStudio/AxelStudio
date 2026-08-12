@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Animation Mode State & Auto-Rotate Direction (Default to 'spiral' 3D Helix)
   let animationMode = localStorage.getItem('axel_gallery_anim_mode') || 'spiral';
-  let autoRotateDir = -1;
+  let autoRotateDir = 1;
 
   // App State
   let targetX = 0;
