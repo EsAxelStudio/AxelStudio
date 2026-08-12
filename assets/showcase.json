@@ -30,6 +30,10 @@
       "desc": "Axel Studio 05"
     },
     {
+      "src": "./assets/showcase/16.jpg",
+      "desc": "16"
+    },
+    {
       "src": "assets/showcase/thumbnail-04.webp",
       "desc": "Axel Studio 04"
     },
@@ -54,7 +58,7 @@
       "desc": "Axel Studio 11"
     },
     {
-      "src": "./assets/showcase/15.jpg",
+      "src": "assets/showcase/15.jpg",
       "desc": "15"
     }
   ]
