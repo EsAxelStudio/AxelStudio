@@ -30,9 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Active Showcase Items (Load 100% from assets/showcase.json)
   let showcaseItems = [...defaultShowcaseItems];
 
-  fetch('assets/showcase.json?v=' + Date.now())
-    .then(res => res.json())
-    .then(data => {
+  async function loadConfig() {
+    try {
+      const res = await fetch('assets/showcase.json?v=' + Date.now());
+      const data = await res.json();
       if (data && Array.isArray(data.items) && data.items.length > 0) {
         showcaseItems = data.items.map(item => ({
           ...item,
@@ -41,10 +42,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.animationMode) {
           animationMode = data.animationMode;
         }
-        buildPanels();
       }
-    })
-    .catch(err => console.log('Using default showcase items'));
+    } catch (e) {
+      console.warn('Config load fallback note:', e);
+    }
+    buildPanels();
+  }
+
+  loadConfig();
 
   let totalItems = showcaseItems.length;
   const PANEL_WIDTH = 4.0;
@@ -757,7 +762,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeLoginBtn = document.getElementById('closeLoginBtn');
   const logoutAdminBtn = document.getElementById('logoutAdminBtn');
 
-  function openAdminPanelDirect() {
+  async function openAdminPanelDirect() {
+    await loadConfig();
     workingItems = JSON.parse(JSON.stringify(showcaseItems));
     if (animationModeSelect) {
       animationModeSelect.value = animationMode;
@@ -833,31 +839,25 @@ document.addEventListener('DOMContentLoaded', () => {
   closeAdminBtn.addEventListener('click', closeAdminModal);
   cancelAdminBtn.addEventListener('click', closeAdminModal);
 
-  saveAdminBtn.addEventListener('click', () => {
+  saveAdminBtn.addEventListener('click', async () => {
     showcaseItems = JSON.parse(JSON.stringify(workingItems));
     if (animationModeSelect) {
       animationMode = animationModeSelect.value;
     }
 
-    // Clean up any stale localStorage
     try {
-      localStorage.removeItem('axel_gallery_order');
-      localStorage.removeItem('axel_gallery_anim_mode');
-    } catch (e) {}
-
-    // Send POST /api/save-config to save PERMANENTLY to assets/showcase.json and push live to GitHub!
-    fetch('/api/save-config', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        animationMode,
-        items: showcaseItems
-      })
-    }).then(res => res.json()).then(data => {
-      console.log('Saved permanently to assets/showcase.json and pushed to GitHub!', data);
-    }).catch(err => {
+      await fetch('/api/save-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          animationMode,
+          items: showcaseItems
+        })
+      });
+      console.log('Saved permanently to assets/showcase.json and pushed to GitHub!');
+    } catch (err) {
       console.warn('Backend save note:', err);
-    });
+    }
 
     buildPanels();
     closeAdminModal();
