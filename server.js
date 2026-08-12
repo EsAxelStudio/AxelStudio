@@ -137,7 +137,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log(`\n==================================================`);
-  console.log(`  AURA / VIBECURB SERVER RUNNING AT:`);
+  console.log(`  AXEL STUDIO SERVER RUNNING AT:`);
   console.log(`  http://localhost:${PORT}`);
   console.log(`==================================================\n`);
 });

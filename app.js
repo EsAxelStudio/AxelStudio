@@ -1,5 +1,5 @@
 /**
- * VibeCurb Showcase 3D WebGL Engine (Horizontal Carousel + Controlled Focus Navigation)
+ * Axel Studio Showcase 3D WebGL Engine (Helix Spiral & Horizontal Carousel)
  * Three.js & GSAP
  */
 
