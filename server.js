@@ -19,6 +19,42 @@ const MIME_TYPES = {
 };
 
 const server = http.createServer((req, res) => {
+  if (req.method === 'POST' && req.url === '/api/save-config') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body);
+        const configPath = path.join(PUBLIC_DIR, 'assets', 'showcase.json');
+        
+        fs.writeFile(configPath, JSON.stringify(payload, null, 2), (err) => {
+          if (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Failed to write showcase.json' }));
+            return;
+          }
+
+          // Auto-commit and push to GitHub repository so changes deploy live for all visitors!
+          const { exec } = require('child_process');
+          exec('git add . && git commit -m "Auto-save gallery config from Admin Panel" && git push origin main', (gitErr, stdout, stderr) => {
+            if (gitErr) {
+              console.log('Git auto-push note:', gitErr.message);
+            } else {
+              console.log('Successfully pushed new gallery config to GitHub!');
+            }
+          });
+
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true }));
+        });
+      } catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Malformed JSON payload' }));
+      }
+    });
+    return;
+  }
+
   if (req.method === 'POST' && req.url === '/api/upload') {
     let body = '';
     req.on('data', chunk => { body += chunk; });

@@ -21,26 +21,24 @@ document.addEventListener('DOMContentLoaded', () => {
     { src: 'assets/showcase/brandkit.png', desc: 'Axel Studio 12' }
   ];
 
-  // Active Showcase Items (Load from localStorage if available)
-  let showcaseItems = [];
-  try {
-    const saved = localStorage.getItem('axel_gallery_order');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        showcaseItems = parsed.map(item => ({
+  // Active Showcase Items (Load from assets/showcase.json or fallback)
+  let showcaseItems = [...defaultShowcaseItems];
+
+  fetch('assets/showcase.json?v=' + Date.now())
+    .then(res => res.json())
+    .then(data => {
+      if (data && Array.isArray(data.items) && data.items.length > 0) {
+        showcaseItems = data.items.map(item => ({
           ...item,
           src: item.src.replace(/^(\.|\/)+/, '')
         }));
-      } else {
-        showcaseItems = [...defaultShowcaseItems];
+        if (data.animationMode) {
+          animationMode = data.animationMode;
+        }
+        buildPanels();
       }
-    } else {
-      showcaseItems = [...defaultShowcaseItems];
-    }
-  } catch (e) {
-    showcaseItems = [...defaultShowcaseItems];
-  }
+    })
+    .catch(err => console.log('Using default showcase items'));
 
   let totalItems = showcaseItems.length;
   const PANEL_WIDTH = 4.0;
@@ -841,6 +839,20 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       localStorage.setItem('axel_gallery_order', JSON.stringify(showcaseItems));
     } catch (e) {}
+
+    // Send POST /api/save-config to save PERMANENTLY to assets/showcase.json and push live to GitHub!
+    fetch('/api/save-config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        animationMode,
+        items: showcaseItems
+      })
+    }).then(res => res.json()).then(data => {
+      console.log('Saved permanently to assets/showcase.json and pushed to GitHub!', data);
+    }).catch(err => {
+      console.warn('Backend save note:', err);
+    });
 
     buildPanels();
     closeAdminModal();
