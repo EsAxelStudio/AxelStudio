@@ -2,6 +2,10 @@
   "animationMode": "spiral",
   "items": [
     {
+      "src": "assets/showcase/11e.jpg",
+      "desc": "11e"
+    },
+    {
       "src": "assets/showcase/thumbnail-01.webp",
       "desc": "Axel Studio 01"
     },
@@ -14,20 +18,28 @@
       "desc": "Axel Studio 03"
     },
     {
-      "src": "assets/showcase/thumbnail-04.webp",
-      "desc": "Axel Studio 04"
+      "src": "assets/showcase/13.jpg",
+      "desc": "13"
     },
     {
-      "src": "assets/showcase/11e.jpg",
-      "desc": "11e"
+      "src": "assets/showcase/thumbnail-07.webp",
+      "desc": "Axel Studio 07"
     },
     {
       "src": "assets/showcase/thumbnail-05.webp",
       "desc": "Axel Studio 05"
     },
     {
-      "src": "assets/showcase/thumbnail-07.webp",
-      "desc": "Axel Studio 07"
+      "src": "assets/showcase/thumbnail-04.webp",
+      "desc": "Axel Studio 04"
+    },
+    {
+      "src": "assets/showcase/12.jpg",
+      "desc": "12"
+    },
+    {
+      "src": "assets/showcase/14.jpg",
+      "desc": "14"
     },
     {
       "src": "assets/showcase/thumbnail-08.webp",
@@ -38,20 +50,12 @@
       "desc": "Axel Studio 09"
     },
     {
-      "src": "assets/showcase/12.jpg",
-      "desc": "12"
-    },
-    {
       "src": "assets/showcase/Axel_Studio_11.jpg",
       "desc": "Axel Studio 11"
     },
     {
-      "src": "assets/showcase/13.jpg",
-      "desc": "13"
-    },
-    {
-      "src": "assets/showcase/14.jpg",
-      "desc": "14"
+      "src": "./assets/showcase/15.jpg",
+      "desc": "15"
     }
   ]
 }
