@@ -34,15 +34,33 @@ const server = http.createServer((req, res) => {
             return;
           }
 
-          // Auto-commit and push to GitHub repository so changes deploy live for all visitors!
-          const { exec } = require('child_process');
-          exec('git add . && git commit -m "Auto-save gallery config from Admin Panel" && git push origin main', (gitErr, stdout, stderr) => {
-            if (gitErr) {
-              console.log('Git auto-push note:', gitErr.message);
-            } else {
-              console.log('Successfully pushed new gallery config to GitHub!');
+        // Clean up orphaned images in assets/showcase/ that are no longer used
+        const showcaseDir = path.join(PUBLIC_DIR, 'assets', 'showcase');
+        if (fs.existsSync(showcaseDir) && Array.isArray(payload.items)) {
+          const usedBasenames = new Set(payload.items.map(item => path.basename(item.src)));
+          fs.readdir(showcaseDir, (err, files) => {
+            if (!err && files) {
+              files.forEach(file => {
+                if (!usedBasenames.has(file)) {
+                  const orphanPath = path.join(showcaseDir, file);
+                  fs.unlink(orphanPath, () => {
+                    console.log('Cleaned up unused image file:', file);
+                  });
+                }
+              });
             }
           });
+        }
+
+        // Auto-commit and push to GitHub repository so changes deploy live for all visitors!
+        const { exec } = require('child_process');
+        exec('git add -A && git commit -m "Auto-save gallery config & cleanup unused images" && git push origin main', (gitErr, stdout, stderr) => {
+          if (gitErr) {
+            console.log('Git auto-push note:', gitErr.message);
+          } else {
+            console.log('Successfully pushed new gallery config to GitHub!');
+          }
+        });
 
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ success: true }));

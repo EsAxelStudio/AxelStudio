@@ -5,20 +5,23 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Default Showcase Items (12 Items)
+  // Default Showcase Items (15 Active Items)
   const defaultShowcaseItems = [
+    { src: 'assets/showcase/11e.jpg', desc: '11e' },
     { src: 'assets/showcase/thumbnail-01.webp', desc: 'Axel Studio 01' },
     { src: 'assets/showcase/thumbnail-02.webp', desc: 'Axel Studio 02' },
     { src: 'assets/showcase/thumbnail-03.webp', desc: 'Axel Studio 03' },
-    { src: 'assets/showcase/thumbnail-04.webp', desc: 'Axel Studio 04' },
-    { src: 'assets/showcase/thumbnail-05.webp', desc: 'Axel Studio 05' },
-    { src: 'assets/showcase/thumbnail-06.webp', desc: 'Axel Studio 06' },
+    { src: 'assets/showcase/13.jpg', desc: '13' },
     { src: 'assets/showcase/thumbnail-07.webp', desc: 'Axel Studio 07' },
+    { src: 'assets/showcase/thumbnail-05.webp', desc: 'Axel Studio 05' },
+    { src: 'assets/showcase/16.jpg', desc: '16' },
+    { src: 'assets/showcase/thumbnail-04.webp', desc: 'Axel Studio 04' },
+    { src: 'assets/showcase/12.jpg', desc: '12' },
+    { src: 'assets/showcase/14.jpg', desc: '14' },
     { src: 'assets/showcase/thumbnail-08.webp', desc: 'Axel Studio 08' },
     { src: 'assets/showcase/thumbnail-09.webp', desc: 'Axel Studio 09' },
-    { src: 'assets/showcase/awwwardshero.png', desc: 'Axel Studio 10' },
-    { src: 'assets/showcase/PixelPerfect.png', desc: 'Axel Studio 11' },
-    { src: 'assets/showcase/brandkit.png', desc: 'Axel Studio 12' }
+    { src: 'assets/showcase/Axel_Studio_11.jpg', desc: 'Axel Studio 11' },
+    { src: 'assets/showcase/15.jpg', desc: '15' }
   ];
 
   // Clean up any legacy localStorage that might override permanent config
