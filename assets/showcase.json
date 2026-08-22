@@ -14,10 +14,6 @@
       "desc": "Axel Studio 02"
     },
     {
-      "src": "assets/showcase/thumbnail-03.webp",
-      "desc": "Axel Studio 03"
-    },
-    {
       "src": "assets/showcase/13.jpg",
       "desc": "13"
     },
@@ -30,12 +26,8 @@
       "desc": "Axel Studio 05"
     },
     {
-      "src": "./assets/showcase/16.jpg",
+      "src": "assets/showcase/16.jpg",
       "desc": "16"
-    },
-    {
-      "src": "assets/showcase/thumbnail-04.webp",
-      "desc": "Axel Studio 04"
     },
     {
       "src": "assets/showcase/12.jpg",
@@ -44,10 +36,6 @@
     {
       "src": "assets/showcase/14.jpg",
       "desc": "14"
-    },
-    {
-      "src": "assets/showcase/thumbnail-08.webp",
-      "desc": "Axel Studio 08"
     },
     {
       "src": "assets/showcase/thumbnail-09.webp",
